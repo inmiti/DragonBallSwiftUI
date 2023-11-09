@@ -15,48 +15,48 @@ final class RootViewModel: ObservableObject {
     @Published var isLogged: Bool = false  //indica si está o no logeado el usuario
     
     //token del login
-//    @Published var tokenJWT: String = "" {
-//        didSet{
-//            print("llega el login: \(tokenJWT)")
-//            saveKC(key: CONST_TOKEN_ID, value: tokenJWT) //No tengo que poner el _ = porque le puese a la funcion el @discardableResult
-//
-//            if tokenJWT.count > 0 {
-//                isLogged = true
-//            } else {
-//                isLogged = false
-//            }
-//        }
-//    }
-    @kcPersistenceKeyChain(key: CONST_TOKEN_ID)
-    var tokenJWT {
+    @Published var tokenJWT: String = "" {
         didSet{
-            print("token: \(tokenJWT)")
+            print("llega el login: \(tokenJWT)")
+            saveKC(key: CONST_TOKEN_ID, value: tokenJWT) //No tengo que poner el _ = porque le puese a la funcion el @discardableResult
+
+            if tokenJWT.count > 0 {
+                isLogged = true
+            } else {
+                isLogged = false
+            }
         }
     }
+//    @kcPersistenceKeyChain(key: CONST_TOKEN_ID)
+//    var tokenJWT {
+//        didSet{
+//            print("token: \(tokenJWT)")
+//        }
+//    }
     //combine
     var suscriptors = Set<AnyCancellable>()
     //inicializado
-    init(){
-        self.LogedUserControl() //control de si está logado
-    }
-    
-    //Cierre de sesión
-    func CloseSession() {
-        tokenJWT = ""
-        status = .none
-    }
-    //Control de usuario conectado
-    func LogedUserControl(){
+//    init(){
+//        self.LogedUserControl() //control de si está logado
+//    }
+//
+//    //Cierre de sesión
+//    func CloseSession() {
+//        tokenJWT = ""
+//        status = .none
+//    }
+//    //Control de usuario conectado
+//    func LogedUserControl(){
 //        let tokenOptional = loadKC(key: CONST_TOKEN_ID) //leemo el token
 //        if let token = tokenOptional {
 //            tokenJWT = token //asigno el token guardado
 //            status = .loaded
 //        }
-        if tokenJWT != ""{
-            status = .loaded
-        }
-    }
-    
+//        if tokenJWT != ""{
+//            status = .loaded
+//        }
+//    }
+//    
     //Login al servidor
     func login(user: String, password: String) {
         status = .loading
@@ -64,7 +64,7 @@ final class RootViewModel: ObservableObject {
         URLSession.shared
             .dataTaskPublisher(for: BaseNetwork().getSessionLogin(user: user, password: password))
             .tryMap {
-                //evaluamos si es 200 y devolvemos JSON, si no exception
+                //Evaluamos si es 200 y devolvemos JSON, si no exception
                 guard let response = $0.response as? HTTPURLResponse,
                       response.statusCode == 200 else {
                     throw URLError(.badServerResponse)
@@ -87,5 +87,5 @@ final class RootViewModel: ObservableObject {
                 print("Token: \(token)")
             }
             .store(in: &suscriptors)
-    }    
+    }
 }

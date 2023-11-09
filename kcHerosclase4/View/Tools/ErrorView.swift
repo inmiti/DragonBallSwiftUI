@@ -17,8 +17,8 @@ struct ErrorView: View {
     }
     
     var body: some View {
-        VStack{
-            Space()
+        VStack {
+            Spacer()
             Image(systemName: "exclamationmark.triangle")
                 .resizable()
                 .foregroundColor(.red)
@@ -30,12 +30,12 @@ struct ErrorView: View {
                 .bold()
                 .padding()
             
-            Spacer
+            Spacer()
             
             //Button
             Button(action: {
                 //acción
-                rootViewModel.CloseSession()
+//                rootViewModel.CloseSession()
             }, label: {
                 Text("Volver")
                     .font(.title)

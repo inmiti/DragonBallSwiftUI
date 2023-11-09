@@ -32,7 +32,6 @@ struct LoginView: View {
                 .opacity(0.3)
             
             //Image logo
-            
             VStack{
                 Image(decorative: "title")
                     .resizable()
@@ -93,7 +92,7 @@ struct LoginView: View {
                         .bold()
                     
                     Button(action: {
-                        
+                        //habría que hacer el registro de la app
                     }, label: {
                         Text("Registro")
                             .foregroundStyle(.blue)
@@ -108,9 +107,8 @@ struct LoginView: View {
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
         LoginView()
-            .environment(\.locale, .init(identifier: "en"))
+            .environment(\.locale, .init(identifier: "es"))
             .preferredColorScheme(.light)
-//            .preferredColorScheme(.light)
-        //.environment(\.locale, .init(identifier: "es"))
+            .environmentObject(RootViewModel())
     }
 }

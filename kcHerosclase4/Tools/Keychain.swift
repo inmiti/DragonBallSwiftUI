@@ -9,11 +9,11 @@ import KeychainSwift
 
 //Guardamos
 @discardableResult //El que lo llama puede usarlo o no
-func saveKC(key: String, value: String) -> Bool {
+func saveKC(key: String, value: String) -> Bool {  // Lo suyo en solid no es una función.
     //Convirtiendo cadena value en data utf8
-    if let data = value.data(using: .utf8) {
+    if let data = value.data(using: .utf8) { //No aceptar caracteres raros, hay que pasar antes a utf8
         let kc = KeychainSwift()
-        return kc.set(data, forKey: key)
+        return kc.set(data, forKey: key) //Devuelve bool si graba satisfactoriamente el data.
     } else {
         //No desempaqueta
         return false
@@ -31,5 +31,5 @@ func loadKC(key: String) -> String? {
 
 //Borramos
 func deleteKC(key: String) -> Bool {
-    KeychainSwift().delete(key)
+    KeychainSwift().delete(key)  //solo una línea de código no es necesario el return
 }

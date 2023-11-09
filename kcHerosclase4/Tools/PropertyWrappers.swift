@@ -16,7 +16,7 @@ class kcPersistenceKeyChain {
         self.key = key
     }
     
-    var wrapperValue: String {
+    var wrappedValue: String {
         get {
             if let value = loadKC(key: key) {
                 return value

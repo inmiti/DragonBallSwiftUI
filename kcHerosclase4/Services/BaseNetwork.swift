@@ -18,6 +18,7 @@ struct HTTPMethods {
     static let delete = "DELETE"
     
     static let content = "application/json"
+    static let contentType = "Content-type"
 }
 
 enum endpoints: String {
@@ -37,7 +38,7 @@ struct BaseNetwork {
         //Crear request
         var request: URLRequest = URLRequest(url: URL(string: urlS)!)
         request.httpMethod = HTTPMethods.post
-        request.addValue(HTTPMethods.content, forHTTPHeaderField: "Content-type")
+        request.addValue(HTTPMethods.content, forHTTPHeaderField: HTTPMethods.contentType)
         request .addValue(sefCredential, forHTTPHeaderField: "Authorization")
         
         return request

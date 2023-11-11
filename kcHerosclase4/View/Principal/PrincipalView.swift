@@ -13,11 +13,6 @@ struct PrincipalView: View {
         TabView{     
             VStack{
                 HeroesView(viewModel: viewModelHeros(testing: false))
-                Button(action: {
-                    rootViewModel.CloseSession()
-                }, label: {
-                    Text("Cerrar sesion")
-                })
             }
             .tabItem {
                 Image(systemName: "house")

@@ -14,6 +14,7 @@ final class RootViewModel: ObservableObject {
     @Published var status = Status.none  //estado por defecto
     var isLogged: Bool = false  //indica si está o no logeado el usuario
     
+    @Published var bootcamps: [Bootcamp]?
     //token del login
     /*
     @Published var tokenJWT: String = ""
@@ -41,8 +42,15 @@ final class RootViewModel: ObservableObject {
     //combine
     var suscriptors = Set<AnyCancellable>()
     //inicializador
-    init(){
+    init(testing: Bool = false){
         self.LogedUserControl() //control de si está logado
+        
+        //Cargamos los boots si no estamos en testing o diseño
+        if(!testing){
+            self.loadBootcamps()
+        } else {
+            loadBootcampsTesting()
+        }
     }
 
     //Cierre de sesión
@@ -94,5 +102,45 @@ final class RootViewModel: ObservableObject {
                 print("Token: \(token)")
             }
             .store(in: &suscriptors)
+    }
+    
+    func loadBootcamps() {
+        URLSession.shared
+            .dataTaskPublisher(for: BaseNetwork().getSessionBootcamps())
+            .tryMap{
+                //evaluamos si es 200, sino lo es Exception. Si es 200 pues devilvemos el JSON que es el data
+                guard let response = $0.response as? HTTPURLResponse,
+                      response.statusCode == 200 else {
+                    //error
+                    throw URLError(.badServerResponse)
+                }
+                
+                //Todo OK. Devuelvo Data
+                return $0.data
+            }
+            .decode(type: [Bootcamp].self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                switch completion{
+                case .failure:
+                    self.status = .error(error: "Error buscando bootcamps")
+                case .finished:
+                    self.status = .loaded //Success
+                }
+            } receiveValue: { data in
+                self.bootcamps = data
+                
+            }
+            .store(in: &suscriptors)
+    }
+    
+    //Testing o diseño de UI
+    func loadBootcampsTesting(){
+        let b1 = Bootcamp(id: UUID().uuidString, name: "boot mobile 1")
+        let b2 = Bootcamp(id: UUID().uuidString, name: "boot mobile 2")
+        let b3 = Bootcamp(id: UUID().uuidString, name: "boot mobile 3")
+        let b4 = Bootcamp(id: UUID().uuidString, name: "boot mobile 4")
+        
+        self.bootcamps = [b1, b2, b3, b4]
     }
 }

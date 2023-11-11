@@ -10,6 +10,7 @@ import SwiftUI
 struct HeroesView: View {
     @StateObject var viewModel: viewModelHeros
     @State private var filter: String = ""
+    @EnvironmentObject var viewModelRoot: RootViewModel
     var body: some View {
         NavigationStack{
             List{
@@ -17,6 +18,7 @@ struct HeroesView: View {
                     ForEach(heroes){data in
                         NavigationLink {
                             //Destino
+                            HeroesDetailView(hero: data)
                         } label: {
                             //La celda personalizada
                             HeroesRowView(hero: data)
@@ -26,6 +28,21 @@ struct HeroesView: View {
                 }
             }
             .navigationTitle("Heros")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        //Close session
+                        viewModelRoot.CloseSession()
+                    }, label: {
+                        HStack{
+                            Image(systemName: "xmark.circle")
+                            Text("Close")
+                                .font(.caption)
+                        }
+                    })
+                }
+            }
+            
         }
         .searchable(text: $filter,
                     placement: .navigationBarDrawer(displayMode: .always),

@@ -12,11 +12,11 @@ struct Heros: Codable, Identifiable{
     var name: String
     var description: String
     var photo: String //url
-    var favorite: Bool
+    var favorite: Bool?
 }
 
 //Para la request, necesito el nombre del heroe
 
 struct HeroFilter: Codable {
-    var nombre: String
+    var name: String
 }

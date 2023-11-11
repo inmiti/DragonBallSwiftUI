@@ -12,10 +12,12 @@ public let CONST_TOKEN_ID = "TokenJWTAppiOSBoot166"
 
 final class RootViewModel: ObservableObject {
     @Published var status = Status.none  //estado por defecto
-    @Published var isLogged: Bool = false  //indica si está o no logeado el usuario
+    var isLogged: Bool = false  //indica si está o no logeado el usuario
     
     //token del login
-    @Published var tokenJWT: String = "" {
+    /*
+    @Published var tokenJWT: String = ""
+     {
         didSet{
             print("llega el login: \(tokenJWT)")
             saveKC(key: CONST_TOKEN_ID, value: tokenJWT) //No tengo que poner el _ = porque le puese a la funcion el @discardableResult
@@ -27,36 +29,41 @@ final class RootViewModel: ObservableObject {
             }
         }
     }
-//    @kcPersistenceKeyChain(key: CONST_TOKEN_ID)
-//    var tokenJWT {
-//        didSet{
-//            print("token: \(tokenJWT)")
-//        }
-//    }
+     */
+    
+    @kcPersistenceKeyChain(key: CONST_TOKEN_ID)
+    var tokenJWT {
+        didSet{
+            print("token: \(tokenJWT)")
+        }
+    }
+    
     //combine
     var suscriptors = Set<AnyCancellable>()
-    //inicializado
-//    init(){
-//        self.LogedUserControl() //control de si está logado
-//    }
-//
-//    //Cierre de sesión
-//    func CloseSession() {
-//        tokenJWT = ""
-//        status = .none
-//    }
-//    //Control de usuario conectado
-//    func LogedUserControl(){
-//        let tokenOptional = loadKC(key: CONST_TOKEN_ID) //leemo el token
-//        if let token = tokenOptional {
-//            tokenJWT = token //asigno el token guardado
-//            status = .loaded
-//        }
-//        if tokenJWT != ""{
-//            status = .loaded
-//        }
-//    }
-//    
+    //inicializador
+    init(){
+        self.LogedUserControl() //control de si está logado
+    }
+
+    //Cierre de sesión
+    func CloseSession() {
+        tokenJWT = ""
+        status = .none
+    }
+    //Control de usuario conectado
+    func LogedUserControl(){
+        /*
+         let tokenOptional = loadKC(key: CONST_TOKEN_ID) //leo el token
+        if let token = tokenOptional {
+            tokenJWT = token //asigno el token guardado
+            status = .loaded
+        }
+         */
+        if tokenJWT != ""{
+            status = .loaded
+        }
+    }
+    
     //Login al servidor
     func login(user: String, password: String) {
         status = .loading

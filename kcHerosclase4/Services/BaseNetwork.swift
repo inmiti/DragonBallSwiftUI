@@ -23,6 +23,7 @@ struct HTTPMethods {
 
 enum endpoints: String {
     case login = "/api/auth/login"
+    case herosList = "/api/heros/all"
 }
 
 struct BaseNetwork {
@@ -40,6 +41,25 @@ struct BaseNetwork {
         request.httpMethod = HTTPMethods.post
         request.addValue(HTTPMethods.content, forHTTPHeaderField: HTTPMethods.contentType)
         request .addValue(sefCredential, forHTTPHeaderField: "Authorization")
+        
+        return request
+    }
+    
+    func getSessionHero(filter: String) -> URLRequest{
+        let urlCad = "\(server)\(endpoints.herosList.rawValue)"
+        
+        var request: URLRequest = URLRequest(url: URL(string: urlCad)!)
+        request.httpMethod = HTTPMethods.post
+        
+        //generamos el JSON y lo metemos en el body de la llamada
+        request.httpBody = try? JSONEncoder().encode(HeroFilter(name: filter))
+        request.addValue(HTTPMethods.content, forHTTPHeaderField: "Content-type")
+        
+        //seguridad JWT
+        let tokenOptional = loadKC(key: CONST_TOKEN_ID)
+        if let tokenJWT = tokenOptional {
+            request.addValue("Bearer \(tokenJWT)", forHTTPHeaderField: "Authorization")
+        }
         
         return request
     }

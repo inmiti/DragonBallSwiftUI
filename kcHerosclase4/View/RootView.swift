@@ -8,28 +8,29 @@
 import SwiftUI
 
 struct RootView: View {
-//    @EnvironmentObject var rootViewModel = RootViewModel()
+    @EnvironmentObject var rootViewModel: RootViewModel
     var body: some View {
-        Text("Este es el rootView")
         //Status Box o ViewRouter
-//        switch rootViewModel.status{
-//        case Status.none:
-//            LoginView() //Login
-//        case .register:
-//            Text("Registro")
-//        case .loading:
-//            withAnimation {
-//                LoaderView()
-//            }
-//        case .error(error: let errorString):
-//            withAnimation {
-//                ErrorView(error: errorString)
-//            }
-//        case .loaded:
-//            withAnimation {
-//                PrincipalView()
-//            }
-//        }
+        switch rootViewModel.status {
+            case Status.none:
+                withAnimation {
+                    LoginView() //Login
+                }
+            case .register:
+                Text("Registro")
+            case .loading:
+                withAnimation {
+                    LoaderView()
+                }
+            case .error(error: let errorString):
+                withAnimation {
+                    ErrorView(error: errorString)
+                }
+            case .loaded:
+                withAnimation {
+                    PrincipalView()
+                }
+        }
     }
 }
 

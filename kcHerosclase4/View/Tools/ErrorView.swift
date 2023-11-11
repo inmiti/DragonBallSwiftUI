@@ -35,11 +35,12 @@ struct ErrorView: View {
             //Button
             Button(action: {
                 //acción
-//                rootViewModel.CloseSession()
+                rootViewModel.status  = .none //volvemos a login
             }, label: {
                 Text("Volver")
                     .font(.title)
                     .foregroundStyle(.white)
+                    .padding()
                     .frame(width: 300, height: 50)
                     .background(.orange)
                     .cornerRadius(20)

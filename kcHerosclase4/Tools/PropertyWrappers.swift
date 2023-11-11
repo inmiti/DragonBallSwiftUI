@@ -17,6 +17,7 @@ class kcPersistenceKeyChain {
     }
     
     var wrappedValue: String {
+        //Leer propiedad
         get {
             if let value = loadKC(key: key) {
                 return value
@@ -24,6 +25,7 @@ class kcPersistenceKeyChain {
                 return ""
             }
         }
+        //Asignar valor
         set{
             //Grabar
             saveKC(key: key, value: newValue)

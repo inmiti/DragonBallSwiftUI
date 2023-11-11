@@ -9,13 +9,17 @@ import SwiftUI
 
 struct LoaderView: View {
     var body: some View {
-        Image(systemName: "clock")
-            .resizable()
-            .frame(width: 100, height: 100)
         
-        Text("Por favor espere ....")
-            .font(.title)
-            .padding()
+        VStack{
+            Image(systemName: "clock")
+                .resizable()
+                .frame(width: 100, height: 100)
+                .foregroundColor(.gray)
+            
+            Text("Por favor espere ....")
+                .font(.title)
+                .padding(.top, 50)
+        }
     }
 }
 

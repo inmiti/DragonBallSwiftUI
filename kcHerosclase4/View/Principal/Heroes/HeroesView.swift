@@ -8,36 +8,36 @@
 import SwiftUI
 
 struct HeroesView: View {
-//    @StateObject var viewModel: viewModelHeroes
-//    @StateObject private var filter: String = ""
+    @StateObject var viewModel: viewModelHeros
+    @State private var filter: String = ""
     var body: some View {
-        Text("Listado de héroes")
-//        NavigationStack{
-//            List{
-//                if let heroes = viewModel.heros {
-//                    ForEach(heroes){
-//                        NavigationLink {data in
-//                            //Destino
-//                        } label: {
-//                            //La celda personalizada
-//                            HeroesRowView(hero: data)
-//                        }
-//                    }
-//                }
-//            }
-//            .navigationTitle("Heros")
-//        }
-//        .searchable(text: $filter,
-//                    placement: .navigationBarDrawer(displayMode: .always),
-//                    prompt: "Buscar héroes...")
-//        .onChange(of: filter) { oldValue, newValue in
-//            viewModel.getHeros(filter: newValue )
-//        }
+        NavigationStack{
+            List{
+                if let heroes = viewModel.heros {
+                    ForEach(heroes){data in
+                        NavigationLink {
+                            //Destino
+                        } label: {
+                            //La celda personalizada
+                            HeroesRowView(hero: data)
+                                .frame(height: 200)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Heros")
+        }
+        .searchable(text: $filter,
+                    placement: .navigationBarDrawer(displayMode: .always),
+                    prompt: "Buscar héroes...")
+        .onChange(of: filter) { newValue in
+            viewModel.getHeros(filter: newValue )
+        }
     }
 }
 
 struct HeroesView_Previews: PreviewProvider {
     static var previews: some View {
-        HeroesView()
+        HeroesView(viewModel: viewModelHeros(testing: true))
     }
 }

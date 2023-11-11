@@ -92,12 +92,13 @@ struct LoginView: View {
                         .bold()
                     
                     Button(action: {
-                        //habría que hacer el registro de la app
+                        rootViewModel.status = .register
                     }, label: {
                         Text("Registro")
                             .foregroundStyle(.blue)
                     })
                 }
+                .padding(.bottom, 40)
             }
         }
         .ignoresSafeArea()

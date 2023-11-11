@@ -10,21 +10,18 @@ import SwiftUI
 struct PrincipalView: View {
     @EnvironmentObject var rootViewModel: RootViewModel
     var body: some View {
-        VStack{
-            
-//            Text("Hola somos la Home")
-//
-//            Button(action: {
-//                rootViewModel.CloseSession()
-//            }, label: {
-//                Text("Cerrar sesion")
-//            })
-            
+        TabView{     
             VStack{
-                Text("Lista heroes")
+                HeroesView(viewModel: viewModelHeros(testing: false))
+                Button(action: {
+                    rootViewModel.CloseSession()
+                }, label: {
+                    Text("Cerrar sesion")
+                })
             }
             .tabItem {
                 Image(systemName: "house")
+                Text("Héroes")
             }
         }
     }

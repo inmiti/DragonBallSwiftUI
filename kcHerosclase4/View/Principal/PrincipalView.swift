@@ -18,6 +18,11 @@ struct PrincipalView: View {
                 Image(systemName: "house")
                 Text("Héroes")
             }
+            DevelopersView(viewModel: ViewModelDevelpers())
+                .tabItem {
+                    Image(systemName: "person")
+                    Text("Developers")
+                }
         }
     }
 }

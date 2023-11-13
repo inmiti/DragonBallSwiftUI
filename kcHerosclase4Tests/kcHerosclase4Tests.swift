@@ -79,6 +79,7 @@ final class kcHerosclase4Tests: XCTestCase {
                     expectation.fulfill()
                 case .failure:
                     XCTAssertEqual(1, 2) //genero el fallo
+                    expectation.fulfill()
                 }
             } receiveValue: { data in
                 XCTAssertEqual(1, 1)
@@ -94,31 +95,33 @@ final class kcHerosclase4Tests: XCTestCase {
     
     
     func testViewModelHeroes() throws{
-        let expectation = self.expectation(description: "Descarga de bootcamps")
+        let expectation = self.expectation(description: "Descarga de heroes")
         var suscriptor = Set<AnyCancellable>()
         
         //Instancio viewModel:
-        let vm = RootViewModel(testing: true)
+        let vm = viewModelHeros(interactor: HerosInteractorFake())
         XCTAssertNotNil(vm)
         
         //Creo el observador
-        vm.bootcamps.publisher
+        vm.heros.publisher
             .sink { completion in
                 switch completion{
                 case .finished:
-                    XCTAssertEqual(1, 1) //test ok
-                    expectation.fulfill()
+                    //test ok
+                    print("Terminada la carga de heroes")
+                    
                 case .failure:
                     XCTAssertEqual(1, 2) //genero el fallo
+                    expectation.fulfill()
                 }
-            } receiveValue: { data in
-                XCTAssertEqual(1, 1)
+            } receiveValue: { heros in
+                XCTAssertEqual(heros.count, 4)
+                expectation.fulfill()
             }
             .store(in: &suscriptor)
 
-        //lanzamos la load
-        vm.loadBootcampsTesting()
-        
+        //lanzamos la load porque el constructor de viewModel ya lo hace
+     
         //esperamos x segundos
         self.waitForExpectations(timeout: 10)
     }

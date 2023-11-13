@@ -24,11 +24,14 @@ struct ErrorView: View {
                 .foregroundColor(.red)
                 .frame(width: 200, height: 200)
                 .padding()
+                .id(0)
+            
             Text("\(textError)")
                 .font(.title2)
                 .foregroundColor(.red)
                 .bold()
                 .padding()
+                .id(1)
             
             Spacer()
             
@@ -46,6 +49,7 @@ struct ErrorView: View {
                     .cornerRadius(20)
                     .shadow(radius: 10, x:20, y:10)
             })
+            .id(2)
         }
     }
 }

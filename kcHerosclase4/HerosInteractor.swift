@@ -1,74 +1,33 @@
 //
-//  ViewModelHeros.swift
+//  HerosInteractor.swift
 //  kcHerosclase4
 //
-//  Created by ibautista on 10/11/23.
+//  Created by ibautista on 13/11/23.
 //
 
 import Foundation
 import Combine
 
-final class viewModelHeros: ObservableObject {
-    @Published var heros: [Heros]?
-    @Published var status = Status.none
+protocol HerosInteractorProtocol: AnyObject{
+    func getHeros(filter: String) -> AnyPublisher<[Heros], Error>
+}
+
+final class HerosInteractor: HerosInteractorProtocol {
+    let networker: NetworkerProtocol
+    let baseNetwork: BaseNetwork
     
-    var suscriptors = Set<AnyCancellable>()
-    var interactor : HerosInteractorProtocol
-    
-    init(testing: Bool = false, interactor: HerosInteractorProtocol = HerosInteractor()) {
-        self.interactor = interactor
-        
-        if (testing){
-            getHerosTesting()
-            
-        } else {
-            getHeros(filter: "")
-            print("viewModelHeros inicializado correctamente")
-        }
+    init(network: NetworkerProtocol = Networker(),
+         basenetwork: BaseNetwork = BaseNetwork()) {
+        self.networker = network
+        self.baseNetwork = basenetwork
     }
-    
-    func getHeros(filter: String){
-        self.status = .loading
-      /*
-        URLSession.shared
-            .dataTaskPublisher(for: BaseNetwork().getSessionHero(filter: filter))
-            .tryMap{
-                //evaluamos si es 200, sino lo es Exception. Si es 200 pues devilvemos el JSON que es el data
-                guard let response = $0.response as? HTTPURLResponse,
-                      response.statusCode == 200 else {
-                    //error
-                    throw URLError(.badServerResponse)
-                }
-                
-                //Todo OK. Devuelvo Data
-                return $0.data
-            }
-            .decode(type: [Heros].self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main) */
-        interactor.getHeros(filter: filter)
-            .sink { completion in
-                switch completion{
-                case .failure:
-                    self.status = .error(error: "Error buscando heroes")
-                case .finished:
-                    self.status = .loaded //Success
-                }
-            } receiveValue: { data in
-                self.heros = data
-                
-            }
-            .store(in: &suscriptors)
+    func getHeros(filter: String) -> AnyPublisher<[Heros], Error> {
+        return networker.callServer(type: [Heros].self, request: baseNetwork.getSessionHero(filter: filter))
     }
-    
-    //For Testing and UI Development aunque no debería estar aquí
-    func getHerosTesting(){
-        self.status = .loading
-        self.heros = getHerosDesign()
-        self.status = .loaded
-    }
-    
-    //funcion para diseñar la UI sin hacer llamadas de red
-    func getHerosDesign() -> [Heros]{
+}
+
+final class HerosInteractorFake: HerosInteractorProtocol {
+    func getHeros(filter: String) -> AnyPublisher<[Heros], Error> {
         let hero1 = Heros(id: UUID(), name: "Goku", description: "Sobran las presentaciones cuando se habla de Goku. El Saiyan fue enviado al planeta Tierra, pero hay dos versiones sobre el origen del personaje. Según una publicación especial, cuando Goku nació midieron su poder y apenas llegaba a dos unidades, siendo el Saiyan más débil. Aun así se pensaba que le bastaría para conquistar el planeta. Sin embargo, la versión más popular es que Freezer era una amenaza para su planeta natal y antes de que fuera destruido, se envió a Goku en una incubadora para salvarle.", photo: "https://cdn.alfabetajuega.com/alfabetajuega/2020/12/goku1.jpg?width=300", favorite: true)
         
         let hero2 = Heros(id: UUID(), name: "Vegeta", description: "Vegeta es todo lo contrario. Es arrogante, cruel y despreciable. Quiere conseguir las bolas de Dragón y se enfrenta a todos los protagonistas, matando a Yamcha, Ten Shin Han, Piccolo y Chaos. Es despreciable porque no duda en matar a Nappa, quien entonces era su compañero, como castigo por su fracaso. Tras el intenso entrenamiento de Goku, el guerrero se enfrenta a Vegeta y estuvo a punto de morir. Lejos de sobreponerse, Vegeta huye del planeta Tierra sin saber que pronto tendrá que unirse a los que considera sus enemigos.", photo: "https://cdn.alfabetajuega.com/alfabetajuega/2020/12/vegetita.jpg?width=300", favorite: false)
@@ -77,7 +36,9 @@ final class viewModelHeros: ObservableObject {
         
         let hero4 = Heros(id: UUID(), name: "Krilin", description: "Krilin lo tiene todo. Cuando aún no existían los 'memes', Krilin ya los protagonizaba. Junto a Yamcha ha sido objeto de burla por sus desafortunadas batallas en Dragon Ball Z. Inicialmente, Krilin era el mejor amigo de Goku siendo sólo dos niños que querían aprender artes marciales. El Maestro Roshi les entrena para ser dos grandes luchadores, pero la diferencia entre ambos cada vez es más evidente. Krilin era ambicioso y se ablanda con el tiempo. Es un personaje que acepta un papel secundario para apoyar el éxito de su mejor amigo Goku de una forma totalmente altruista.", photo: "https://cdn.alfabetajuega.com/alfabetajuega/2020/08/Krilin.jpg?width=300", favorite: false)
         
-        return [hero1, hero2, hero3, hero4]
+        let data = [hero1, hero2, hero3, hero4]
+        let publicador = CurrentValueSubject<[Heros], Error>(data)
+        
+        return publicador.eraseToAnyPublisher()
     }
-    
 }

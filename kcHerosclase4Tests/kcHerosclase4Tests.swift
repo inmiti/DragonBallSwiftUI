@@ -6,6 +6,11 @@
 //
 
 import XCTest
+import SwiftUI
+import ViewInspector
+import Combine
+
+@testable import kcHerosclase4
 
 final class kcHerosclase4Tests: XCTestCase {
 
@@ -17,19 +22,105 @@ final class kcHerosclase4Tests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func testModelos() throws {
+        let model = Heros(id: UUID(), name: "Jose", description: "", photo: "", favorite: true)
+        XCTAssertNotNil(model)
+        XCTAssertEqual(model.name, "Jose")
+        XCTAssertEqual(model.getFullName(), "BB Jose")
+        
+        let modelRequest = HeroFilter(name: "Goku")
+        XCTAssertNotNil(modelRequest)
+        XCTAssertEqual(modelRequest.name, "Goku")
     }
+    
+    func testUIViews() throws {
+        let view = ErrorView(error: "Hola") //Instanciamos la view
+            .environmentObject(RootViewModel(testing: true))
+        
+        XCTAssertNotNil(view)
+        
+        let numItems = try view.inspect().count
+        XCTAssertEqual(numItems, 1)
+        
+        //Imagen
+        let img = try view.inspect().find(viewWithId: 0)
+        XCTAssertNotNil(img)
+        
+        //Texto
+        let text = try view.inspect().find(viewWithId: 1)
+        XCTAssertNotNil(text)
+        
+        let texto = try text.text().string()
+        XCTAssertEqual(texto, "Hola")
+        
+        //Boton
+        let button = try view.inspect().find(viewWithId: 2)
+        XCTAssertNotNil(button)
+        
+        //Ejecutar el botón
+        try button.button().tap() //ejectuto el botón
+        
+    }
+    
+    func testViewModelBootcamps() throws{
+        let expectation = self.expectation(description: "Descarga de bootcamps")
+        var suscriptor = Set<AnyCancellable>()
+        
+        //Instancio viewModel:
+        let vm = RootViewModel(testing: true)
+        XCTAssertNotNil(vm)
+        
+        //Creo el observador
+        vm.bootcamps.publisher
+            .sink { completion in
+                switch completion{
+                case .finished:
+                    XCTAssertEqual(1, 1) //test ok
+                    expectation.fulfill()
+                case .failure:
+                    XCTAssertEqual(1, 2) //genero el fallo
+                }
+            } receiveValue: { data in
+                XCTAssertEqual(1, 1)
+            }
+            .store(in: &suscriptor)
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
-        }
+        //lanzamos la load
+        vm.loadBootcampsTesting()
+        
+        //esperamos x segundos
+        self.waitForExpectations(timeout: 10)
+    }
+    
+    
+    func testViewModelHeroes() throws{
+        let expectation = self.expectation(description: "Descarga de bootcamps")
+        var suscriptor = Set<AnyCancellable>()
+        
+        //Instancio viewModel:
+        let vm = RootViewModel(testing: true)
+        XCTAssertNotNil(vm)
+        
+        //Creo el observador
+        vm.bootcamps.publisher
+            .sink { completion in
+                switch completion{
+                case .finished:
+                    XCTAssertEqual(1, 1) //test ok
+                    expectation.fulfill()
+                case .failure:
+                    XCTAssertEqual(1, 2) //genero el fallo
+                }
+            } receiveValue: { data in
+                XCTAssertEqual(1, 1)
+            }
+            .store(in: &suscriptor)
+
+        //lanzamos la load
+        vm.loadBootcampsTesting()
+        
+        //esperamos x segundos
+        self.waitForExpectations(timeout: 10)
     }
 
 }
